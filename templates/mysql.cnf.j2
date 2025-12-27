@@ -12,21 +12,26 @@ binlog_transaction_dependency_tracking = WRITESET
 enforce_gtid_consistency = ON
 gtid_mode = ON
 server_id = {{ 65534 | random(seed=ansible_host) + 1 }}
-innodb_buffer_pool_size = 6G
-innodb_buffer_pool_instances = 6
+innodb_buffer_pool_size = 10G
+innodb_buffer_pool_instances = 10
 
 {% if configure_ssl_connection == true %}
 #require_secure_transport = ON
+##_START_test_config_###
+{% set ssl_dir = '/var/lib/mysql' if inventory_hostname == ansible_play_hosts[0] else '/var/lib/mysql/mysql_ssl' %}
+plugin_load_add = group_replication.so
 group_replication_ssl_mode = REQUIRED
 group_replication_recovery_use_ssl = 1
-group_replication_recovery_ssl_verify_server_cert = 1
-group_replication_recovery_ssl_ca = /var/lib/mysql/ca.pem
-group_replication_recovery_ssl_cert = /var/lib/mysql/client-cert.pem
-group_replication_recovery_ssl_key = /var/lib/mysql/client-key.pem
+group_replication_recovery_ssl_verify_server_cert = 0
+## Need to set group_replication_recovery_ssl_verify_server_cert = 1 if certificates signed by CA
+group_replication_recovery_ssl_ca = {{ ssl_dir }}/ca.pem
+group_replication_recovery_ssl_cert = {{ ssl_dir }}/client-cert.pem
+group_replication_recovery_ssl_key = {{ ssl_dir }}/client-key.pem
+##_END_test_config_###
 ssl-cipher = DHE-RSA-AES256-SHA
-ssl-ca = /var/lib/mysql/ca.pem
-ssl-cert = /var/lib/mysql/server-cert.pem
-ssl-key = /var/lib/mysql/server-key.pem
+ssl-ca = {{ ssl_dir }}/ca.pem
+ssl-cert = {{ ssl_dir }}/server-cert.pem
+ssl-key = {{ ssl_dir }}/server-key.pem
 
 {% endif %}
 
