@@ -1,25 +1,24 @@
 ---
 # tasks file for mysql-cluster
-# - name: Configure list of servers in etc/hosts
-#   ansible.builtin.import_tasks: config_etc_hosts.yml
+- name: Configure list of servers in etc/hosts
+  ansible.builtin.import_tasks: config_etc_hosts.yml
 
-# - name: Security configuration
-#   ansible.builtin.import_tasks: security_config.yml
+- name: Security configuration
+  ansible.builtin.import_tasks: security_config.yml
 
-# - name: Include GPG keys tasks
-#   ansible.builtin.include_tasks: "gpg_keys_{{ ansible_os_family }}.yml"
+- name: Include GPG keys tasks
+  ansible.builtin.include_tasks: "gpg_keys_{{ ansible_os_family }}.yml"
 
-# - name: Install repository
-#   ansible.builtin.include_tasks: "install_repo_{{ ansible_os_family }}.yml"
+- name: Install repository
+  ansible.builtin.include_tasks: "install_repo_{{ ansible_os_family }}.yml"
 
-# - name: Install MySQL community server
-#   ansible.builtin.import_tasks: install_community_server.yml
+- name: Install MySQL community server
+  ansible.builtin.import_tasks: install_community_server.yml
 
-# - name: Run MySQL
-#   ansible.builtin.import_tasks: run_mysql.yml
-
-# - name: Change temporary MySQL root password
-#   ansible.builtin.import_tasks: change_temp_pass_mysql.yml
+- name: Run MySQL
+  ansible.builtin.import_tasks: run_mysql.yml
+- name: Change temporary MySQL root password
+  ansible.builtin.import_tasks: change_temp_pass_mysql.yml
 
 - name: Setup MySQL config file
   ansible.builtin.import_tasks: mysql_config.yml
