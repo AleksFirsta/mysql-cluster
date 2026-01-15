@@ -19,7 +19,7 @@
 - name: Install MySQL packages on RedHat family
   ansible.builtin.yum:
     name:
-      - "mysql-community-server-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}"
+      - "mysql-community-server-{{ mysql_version }}"
       - mysql-shell
     state: present
   when: ansible_os_family == "RedHat"
