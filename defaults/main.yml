@@ -8,6 +8,8 @@ firewall_enabled: true
 firewall_port:
   - 3306
   - 3307
+  - 33060
+  - 33061
 
 # Required params:
 
