@@ -1,11 +1,20 @@
 - name: Install MySQL server on Debian family
   ansible.builtin.apt:
     name: 
-      - "mysql-server={{ mysql_version }}-1ubuntu{{ ansible_distribution_version }}"
+      - "mysql-community-server={{ mysql_version }}"
       - mysql-shell
     state: present
     update_cache: yes
   when: ansible_os_family == "Debian"
+
+- name: Install MySQL server on Ubuntu family
+  ansible.builtin.apt:
+    name: 
+      - "mysql-community-server={{ mysql_version }}"
+      - mysql-shell
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Ubuntu"  
 
 - name: Install MySQL packages on RedHat family
   ansible.builtin.yum:
