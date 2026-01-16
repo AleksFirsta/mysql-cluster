@@ -93,7 +93,7 @@ if (config.status === "ok") {
     interactive: false,
     restart: true
   }).then(session => {
-    print("Instance succesufully configured\n", session);
+    print("Instance successfully configured\n", session);
   }).catch(err => {
     print("error to configure instance\n", err);
   });
