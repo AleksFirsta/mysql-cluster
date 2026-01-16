@@ -14,7 +14,7 @@
 - name: Gather package facts for firewall configuration for {{ansible_os_family}}
   ansible.builtin.package_facts:
     manager: auto
-  when:  
+  when:
     - ansible_os_family == "Debian"
     - firewall_enabled
 
