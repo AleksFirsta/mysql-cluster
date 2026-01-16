@@ -44,7 +44,7 @@
   environment:
     USER: "{{mysql_cluster_admin_user}}"
     PASSWORD: "{{mysql_cluster_admin_pass | default(mysql_root_pass)}}"
-    HOST: "{{ inventory_hostname }}"
+    HOST: "{{ ansible_host | default(inventory_hostname) }}"
     PORT: "3306"
 
 - name: MySQL Cluster - Create cluster
@@ -52,7 +52,7 @@
   environment:
     USER: "{{mysql_cluster_admin_user}}"
     PASSWORD: "{{mysql_cluster_admin_pass | default(mysql_root_pass)}}"
-    HOST: "{{ inventory_hostname }}"
+    HOST: "{{ ansible_host | default(inventory_hostname) }}"
     PORT: "3306"
     CLUSTER_NAME: "{{ mysql_cluster_name }}"
     ACTION: "createCluster"
@@ -63,16 +63,23 @@
   ansible.builtin.set_fact:
     non_bootstrap_nodes: "{{ ansible_play_hosts | difference([ansible_play_hosts[0]]) }}"
 
+- name: Build host address mapping
+  ansible.builtin.set_fact:
+    host_addresses: "{{ host_addresses | default({}) | combine({item: hostvars[item]['ansible_host'] | default(item)}) }}"
+  loop: "{{ ansible_play_hosts }}"
+  when: is_bootstrap_node
+
 
 - name: MySQL Cluster - Add nodes
   ansible.builtin.command: mysqlsh -f /tmp/inno_db_setup.js
   environment:
     USER: "{{ mysql_cluster_admin_user }}"
     PASSWORD: "{{ mysql_cluster_admin_pass | default(mysql_root_pass) }}"
-    HOST: "{{ inventory_hostname }}"
+    HOST: "{{ ansible_host | default(inventory_hostname) }}"
     PORT: "3306"
     ACTION: "addNodes"
-    MYSQL_HOST: "{{item}}"
+    MYSQL_HOST: "{{ item }}"
+    MYSQL_HOST_ADDRESS: "{{ host_addresses[item] }}"
   loop: "{{ non_bootstrap_nodes }}"
   when: is_bootstrap_node
 
@@ -81,13 +88,9 @@
   environment:
     USER: "{{ mysql_cluster_admin_user }}"
     PASSWORD: "{{ mysql_cluster_admin_pass | default(mysql_root_pass) }}"
-    HOST: "{{ inventory_hostname }}"
+    HOST: "{{ ansible_host | default(inventory_hostname) }}"
     PORT: "3306"
-    ACTION: "addNodes"
-    MYSQL_HOST: "{{item}}"
     TOPOLOGY_MODE: "{{ mysql_topology_type | default('') }}"
-  
-  loop: "{{ non_bootstrap_nodes }}"
   when: mysql_topology_type is defined and is_bootstrap_node
 
 

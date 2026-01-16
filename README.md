@@ -24,12 +24,15 @@ No special requirements; note that this role requires root access, so either run
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
 ```plaintext
-mysql_version: 8.0.43 
+mysql_version: 8.0
 configure_ssl_connection: true
 firewall_enabled: true
 firewall_port:
   - 3306
   - 3307
+  - 33060
+  - 33061
+
 
 # Required params:
 

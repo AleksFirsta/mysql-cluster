@@ -7,6 +7,7 @@ let port = os.getenv('PORT');
 let action = os.getenv('ACTION') || "";
 let clusterName = os.getenv('CLUSTER_NAME') || "mysql-cluster";
 let mysqlHost = os.getenv('MYSQL_HOST') || "";
+let mysqlHostAddress = os.getenv('MYSQL_HOST_ADDRESS') || "";
 let topologyMode = os.getenv('TOPOLOGY_MODE') || "";
 
 
@@ -127,16 +128,18 @@ if (action === "addNodes") {
   try {
     let cluster = dba.getCluster();
     let status = cluster.status();
+    let targetHost = mysqlHostAddress || mysqlHost;
 
-    if (isHostInCluster(status, mysqlHost)) {
-      print(`Instance '${mysqlHost}' is already part of the cluster '${cluster.getName()}'. Skipping.\n`);
+    if (isHostInCluster(status, targetHost)) {
+      print(`Instance '${targetHost}' is already part of the cluster '${cluster.getName()}'. Skipping.\n`);
     } else {
-      print(`Adding instance '${mysqlHost}' to the cluster...\n`);
-      cluster.addInstance(mysqlHost, {
+      print(`Adding instance '${targetHost}' to the cluster...\n`);
+      let nodeUri = `${user}:${encodeURIComponent(password)}@${targetHost}:${port}`;
+      cluster.addInstance(nodeUri, {
         recoveryMethod: 'clone',
         interactive: false
       });
-      print(`Instance '${mysqlHost}' added successfully.\n`);
+      print(`Instance '${targetHost}' added successfully.\n`);
     }
   } catch(err) {
     print("Unexpected error during addNodes action: " + err.message + "\n");
