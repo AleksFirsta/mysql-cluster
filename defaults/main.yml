@@ -1,6 +1,6 @@
 ---
 # defaults file for mysql-cluster
-mysql_version: 8.0 # !!! locking is to major-versions only
+mysql_version: 8.0 # !!! locking is to major versions only
 
 configure_ssl_connection: true
 
