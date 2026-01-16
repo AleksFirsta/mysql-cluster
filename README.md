@@ -47,7 +47,7 @@ At the moment, the cluster is running in `**"topologyMode": "Single-Primary"**`,
 Example Playbook
 ----------------
 
-requiremets.yml:
+requirements.yml:
 
 ```plauntext
 - src: git@github.com:AleksFirsta/ansible-role-mysql-cluster.git
