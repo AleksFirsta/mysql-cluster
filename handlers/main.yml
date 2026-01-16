@@ -4,8 +4,3 @@
   ansible.builtin.service:
     name: "{{ 'mysqld' if ansible_os_family == 'RedHat' else 'mysql' }}"
     state: restarted
-
-- name: Refresh package facts
-  ansible.builtin.package_facts:
-    manager: auto
-
