@@ -18,7 +18,7 @@
     - ansible_os_family == "Debian"
     - firewall_enabled
 
-- name: Install UFW if missing on Debian systems
+- name: Install UFW if missing on {{ ansible_os_family }} systems
   ansible.builtin.apt:
     name: ufw
     state: present

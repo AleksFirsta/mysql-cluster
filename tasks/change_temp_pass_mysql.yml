@@ -44,7 +44,8 @@
     '{{ mysql_temp_password }}'
     -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_pass }}';"
   when:
-    - mysql_check_pass.rc != 0 and ansible_os_family == "Debian"
+    - mysql_check_pass.rc != 0
+    - ansible_os_family == "Debian"
   args:
     executable: /bin/bash
   register: mysql_root_pass_change
