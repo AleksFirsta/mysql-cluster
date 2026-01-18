@@ -1,6 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/ansible,intellij+all
-# Edit at https://www.toptal.com/developers/gitignore?templates=ansible,intellij+all
-
 ### Ansible ###
 *.retry
 
