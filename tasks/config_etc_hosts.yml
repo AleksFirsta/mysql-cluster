@@ -1,7 +1,7 @@
 - name: Add all mysql hosts to /etc/hosts
   ansible.builtin.lineinfile: 
     path: /etc/hosts
-    line: "{{ item }} {{ hostvars[item].ansible_hostname }}"
+    line: "{{ hostvars[item]['ansible_host'] | default(item) }} {{ hostvars[item].ansible_hostname }}"
     state: present
   loop: "{{ ansible_play_hosts }}"
   become: true
