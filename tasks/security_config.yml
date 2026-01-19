@@ -11,6 +11,16 @@
     replace: 'SELINUX=permissive'
   when: ansible_os_family == "RedHat"
 
+- name: Install UFW if missing for {{ ansible_os_family }}
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: yes
+  when:
+    - ansible_os_family == "Debian"
+    - firewall_enabled
+    - "'ufw' not in ansible_facts.packages"
+
 - name: Configuration SSH port for firewall for {{ansible_os_family}}
   ansible.builtin.ufw:
     rule: allow
