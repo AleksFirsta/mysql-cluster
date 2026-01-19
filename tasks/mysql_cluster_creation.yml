@@ -90,10 +90,12 @@
     PASSWORD: "{{ mysql_cluster_admin_pass | default(mysql_root_pass) }}"
     HOST: "{{ ansible_host | default(inventory_hostname) }}"
     PORT: "3306"
+    ACTION: "addNodes"
+    MYSQL_HOST: "{{item}}"
     TOPOLOGY_MODE: "{{ mysql_topology_type | default('') }}"
+
+  loop: "{{ non_bootstrap_nodes }}"
   when: mysql_topology_type is defined and is_bootstrap_node
-
-
 
 
 
