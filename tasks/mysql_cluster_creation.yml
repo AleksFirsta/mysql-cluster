@@ -97,6 +97,19 @@
   loop: "{{ non_bootstrap_nodes }}"
   when: mysql_topology_type is defined and is_bootstrap_node
 
+- name: Rescan cluster metadata
+  community.mysql.mysql_shell:
+    login_user: "{{ mysql_cluster_admin_user }}"
+    login_password: "{{ mysql_cluster_admin_pass }}"
+    login_host: "{{ groups['mysql_hosts'][0] }}"
+    login_port: 3306
+    script: |
+      var cluster = dba.getCluster("{{ mysql_cluster_name }}");
+      print("Rescanning cluster metadata...");
+      cluster.rescan();
+      print(cluster.status());
+  run_once: true
+  delegate_to: "{{ groups['mysql_hosts'][0] }}"
 
 
 
