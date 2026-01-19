@@ -1,18 +1,36 @@
-- name: Install MySQL server on {{ ansible_os_family }} family
+- name: Update APT cache
   ansible.builtin.apt:
-    name: 
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  retries: 3
+  delay: 30
+  until: apt_update is success
+  when: ansible_os_family == "Debian"
+
+- name: Install MySQL server on Debian family
+  ansible.builtin.apt:
+    name:
       - "mysql-server={{ mysql_version }}*"
       - mysql-shell
     state: present
-    update_cache: yes
+    update_cache: no
+  register: apt_install
+  retries: 5
+  delay: 60
+  until: apt_install is success
   when: ansible_os_family == "Debian"
 
-- name: Install MySQL packages on {{ ansible_os_family }} family
+- name: Install MySQL packages on RedHat family
   ansible.builtin.yum:
     name:
       - "mysql-community-server-{{ mysql_version }}*"
       - mysql-shell
     state: present
+  register: yum_install
+  retries: 5
+  delay: 60
+  until: yum_install is success
   when: ansible_os_family == "RedHat"
 
 - name: Install PyMySQL for Python3 on Debian-based systems
