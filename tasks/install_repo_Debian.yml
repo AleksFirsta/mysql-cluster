@@ -18,7 +18,9 @@
     deb: /tmp/mysql-apt-config.deb
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - "'mysql-apt-config' not in ansible_facts.packages"
 
 - name: Update apt cache
   ansible.builtin.apt:

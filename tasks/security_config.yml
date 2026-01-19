@@ -11,12 +11,11 @@
     replace: 'SELINUX=permissive'
   when: ansible_os_family == "RedHat"
 
-- name: Gather package facts for firewall configuration for {{ansible_os_family}}
+- name: Gather package facts for {{ansible_os_family}}
   ansible.builtin.package_facts:
     manager: auto
   when:
     - ansible_os_family == "Debian"
-    - firewall_enabled
 
 - name: Install UFW if missing on {{ ansible_os_family }} systems
   ansible.builtin.apt:
