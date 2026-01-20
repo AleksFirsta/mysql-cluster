@@ -1,11 +1,11 @@
-- name: Extract temporary MySQL root password from log ({{ ansible_os_family }} only)
+- name: Extract temporary MySQL root password from log (RedHat only)
   ansible.builtin.command: "grep 'temporary password' /var/log/mysqld.log"
   register: mysql_temp_password_raw
   changed_when: false
   failed_when: mysql_temp_password_raw.stdout == ""
   when: ansible_os_family == "RedHat"
 
-- name: Set temporary MySQL root password fact ({{ ansible_os_family }} only)
+- name: Set temporary MySQL root password fact (RedHat only)
   ansible.builtin.set_fact:
     mysql_temp_password: "{{ mysql_temp_password_raw.stdout_lines[0] | regex_search('temporary password.*: (.+)$', '\\1') }}"
   when: ansible_os_family == "RedHat"
@@ -24,7 +24,7 @@
   changed_when: false
   failed_when: false
 
-- name: Change MySQL root password {{ ansible_os_family }}
+- name: Change MySQL root password on RedHat
   ansible.builtin.shell: >
     sudo mysql -uroot -p'{{mysql_temp_password[0]}}'
     --connect-expired-password
@@ -38,7 +38,7 @@
   changed_when: "'ERROR' not in mysql_root_pass_change.stderr"
   failed_when: "'ERROR' in mysql_root_pass_change.stderr"
 
-- name: Change MySQL root password {{ ansible_os_family }}
+- name: Change MySQL root password on Ubuntu
   ansible.builtin.shell: >
     sudo mysql -uroot -p
     '{{ mysql_temp_password }}'

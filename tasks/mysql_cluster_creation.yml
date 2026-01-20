@@ -21,7 +21,7 @@
     login_unix_socket: "{{ '/var/run/mysqld/mysqld.sock' if ansible_os_family == 'Debian' else '/var/lib/mysql/mysql.sock' }}"
   when: super_read_only_status.query_result[0][0].Value != "ON"
 
-- name: Ensure Python dependencies for MySQL are installed on {{ ansible_os_family }}
+- name: Ensure Python dependencies for MySQL are installed on RedHat
   ansible.builtin.pip:
     name:
       - cryptography

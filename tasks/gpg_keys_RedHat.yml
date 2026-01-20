@@ -1,4 +1,4 @@
-- name: Download GPG keys ({{ ansible_os_family }} family)
+- name: Download GPG keys (RedHat family)
   ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "/tmp/{{ item.filename }}"
@@ -6,7 +6,7 @@
   loop: "{{ gpg_keys }}"
   when: ansible_os_family == "RedHat"
 
-- name: Import GPG keys ({{ ansible_os_family }} family)
+- name: Import GPG keys (RedHat family)
   ansible.builtin.rpm_key:
     state: present
     key: "/tmp/{{ item.filename }}"

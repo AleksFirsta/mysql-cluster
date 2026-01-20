@@ -1,4 +1,4 @@
-- name: Download GPG keys to keyrings directory
+- name: Download GPG keys to keyrings directory (Debian family)
   ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "/usr/share/keyrings/{{ item.filename }}"
