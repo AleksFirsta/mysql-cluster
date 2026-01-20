@@ -24,7 +24,7 @@
   changed_when: false
   failed_when: false
 
-- name: Change MySQL root password RHEL
+- name: Change MySQL root password on RedHat
   ansible.builtin.shell: >
     sudo mysql -uroot -p'{{mysql_temp_password[0]}}'
     --connect-expired-password
@@ -38,7 +38,7 @@
   changed_when: "'ERROR' not in mysql_root_pass_change.stderr"
   failed_when: "'ERROR' in mysql_root_pass_change.stderr"
 
-- name: Change MySQL root password UBUNTU
+- name: Change MySQL root password on Ubuntu
   ansible.builtin.shell: >
     sudo mysql -uroot -p
     '{{ mysql_temp_password }}'

@@ -1,11 +1,11 @@
-- name: Start MySQL service
+- name: Start MySQL service on Debian family
   ansible.builtin.systemd:
     name: mysql
     state: started
     enabled: yes
   when: ansible_os_family == "Debian"
 
-- name: Start MySQL service
+- name: Start MySQL service on RedHat family
   ansible.builtin.systemd:
     name: mysqld
     state: started

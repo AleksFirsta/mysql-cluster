@@ -6,10 +6,9 @@ galaxy_info:
   role_name: mysql-cluster
   author: Grigorenko Aleksandr
   description: >
-    Role to install, configure and manage MySQL Server with InnoDB Cluster setup.
+    Role to install, configure and manage а MySQL Server with InnoDB Cluster setup.
     Includes tasks for repository setup, package installation, security hardening,
     MySQL configuration, and cluster creation for multi-node high availability.
-  company: your_company_here
   license: GPL-3.0
   min_ansible_version: 2.13
   platforms:

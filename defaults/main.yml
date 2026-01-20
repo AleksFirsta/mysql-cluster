@@ -1,17 +1,16 @@
 ---
 # defaults file for mysql-cluster
-mysql_version: 8.0.44
-
+mysql_version: 8.0 # major release version only
 configure_ssl_connection: true
-
 firewall_enabled: true
 firewall_port:
   - 3306
   - 3307
+  - 33060
+  - 33061
 
-# Required params:
-
-mysql_root_pass: ''
-mysql_cluster_name: ''
-mysql_cluster_admin_user: ''
-mysql_cluster_admin_pass: ''
+# Required parameters
+mysql_root_pass: ""
+mysql_cluster_name: ""
+mysql_cluster_admin_user: ""
+mysql_cluster_admin_pass: ""

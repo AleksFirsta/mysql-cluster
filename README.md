@@ -1,17 +1,19 @@
-Mysql-cluster
-=========
+# MySQL Cluster — Ansible Role
 
-This Ansible role install and configure **MySQL-Cluster** on Debian and RedHat based systems.  
-It handles repository setup, package installation, configuration file deployment, and ensures the MySQL service is restarted when configuration changes are applied.
+This Ansible role automates the **installation and configuration of a MySQL Cluster** on Debian- and Red Hat-based systems.  
+It performs repository setup, package installation, configuration file deployment, and restarts the MySQL service when configuration changes are detected.
 
-As the master node, the first host from the inventory is used. If you add an additional entry to the inventory, all the required packages and configurations will be installed, and the host will be added to the cluster.
+The **first host in the Ansible inventory** functions as the *primary (master) node*. Adding additional hosts automatically installs all required packages, deploys configurations, and joins them to the cluster.
+
+***
 
 ## Requirements
 
-No special requirements; note that this role requires root access, so either run it in a playbook with a global `become: true`, or invoke the role in your playbook like:
+This role requires **root privileges**.  
+You can grant privileges globally or at the role level:
 
-```plaintext
-- name: Install and Configure Mysql cluster
+```yaml
+- name: Install and configure MySQL Cluster
   hosts: mysql-cluster
   gather_facts: true
   roles:
@@ -19,48 +21,61 @@ No special requirements; note that this role requires root access, so either run
       become: true
 ```
 
+***
+
 ## Role Variables
 
-Available variables are listed below, along with default values (see `defaults/main.yml`):
+All configurable variables are defined in [`defaults/main.yml`].  
+Below are the key parameters and their default values:
 
-```plaintext
-mysql_version: 8.0.43 
+```yaml
+mysql_version: 8.0
 configure_ssl_connection: true
 firewall_enabled: true
 firewall_port:
   - 3306
   - 3307
+  - 33060
+  - 33061
 
-# Required params:
-
+# Required parameters
 mysql_root_pass: ""
 mysql_cluster_name: ""
 mysql_cluster_admin_user: ""
 mysql_cluster_admin_pass: ""
 ```
 
-At the moment, the cluster is running in `**"topologyMode": "Single-Primary"**`, but it can be switched to `**"topologyMode": "Multi-Primary"**` if necessary. To do this need to add variable `mysql_topology_type: "multinode"`
+By default, the cluster operates in **Single-Primary** mode.  
+To enable **Multi-Primary** mode, include:
 
-Example Playbook
-----------------
+```yaml
+mysql_topology_type: "multinode"
+```
 
-requiremets.yml:
+***
 
-```plauntext
+## Example Playbook
+
+### Role Installation
+
+`requirements.yml`:
+```yaml
 - src: git@github.com:AleksFirsta/ansible-role-mysql-cluster.git
   scm: git
   version: main
   name: mysql-cluster
 ```
 
-`ansible-galaxy install -r requirements.yml -p roles/`
+Install the role:
+```bash
+ansible-galaxy install -r requirements.yml -p roles/
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+### Cluster Deployment
 
-playbook.yml:
-
-```plaintext
-- name: Install and Configure Mysql cluster
+`playbook.yml`:
+```yaml
+- name: Install and configure MySQL Cluster
   hosts: mysql_hosts
   gather_facts: true
   vars:
@@ -68,38 +83,48 @@ playbook.yml:
     mysql_cluster_name: "my-cluster"
     mysql_cluster_admin_user: "clusterAdmin"
     mysql_cluster_admin_pass: "P@ssw0rd3#"
-
   roles:
     - role: mysql-cluster
       become: true
 ```
 
-Cluster status
-----------------
+***
+
+## Verifying Cluster Status
+
+Connect using MySQL Shell:
+
+```bash
+mysqlsh
+```
+
+Then:
 
 ```plaintext
- MySQL  JS > \connect clusterAdmin@test-cluster:3306
-Creating a session to 'clusterAdmin@test-cluster:3306'
-Please provide the password for 'clusterAdmin@test-cluster:3306': **********
-Save password for 'clusterAdmin@test-cluster:3306'? [Y]es/[N]o/Ne[v]er (default No):
-Fetching schema names for auto-completion... Press ^C to stop.
-Your MySQL connection id is 38
-Server version: 8.0.43 MySQL Community Server - GPL
-No default schema selected; type \use <schema> to set one.
- MySQL  test-cluster:3306 ssl  JS > cluster=dba.getCluster()
-<Cluster:my-cluster>
- MySQL  test-cluster:3306 ssl  JS > cluster.status()
+MySQL JS > \connect clusterAdmin@my-cluster:3306
+```
+
+View cluster status:
+
+```plaintext
+MySQL JS > cluster = dba.getCluster()
+MySQL JS > cluster.status()
+```
+
+Example output:
+
+```json
 {
     "clusterName": "my-cluster",
     "defaultReplicaSet": {
         "name": "default",
-        "primary": "test-cluster-2:3306",
+        "primary": "my-cluster-2:3306",
         "ssl": "REQUIRED",
         "status": "OK",
         "statusText": "Cluster is ONLINE and can tolerate up to ONE failure.",
         "topology": {
-            "test-cluster-2:3306": {
-                "address": "test-cluster-2:3306",
+            "my-cluster-2:3306": {
+                "address": "my-cluster-2:3306",
                 "memberRole": "PRIMARY",
                 "mode": "R/W",
                 "readReplicas": {},
@@ -108,8 +133,8 @@ No default schema selected; type \use <schema> to set one.
                 "status": "ONLINE",
                 "version": "8.0.43"
             },
-            "test-cluster-3:3306": {
-                "address": "test-cluster-3:3306",
+            "my-cluster-3:3306": {
+                "address": "my-cluster-3:3306",
                 "memberRole": "SECONDARY",
                 "mode": "R/O",
                 "readReplicas": {},
@@ -118,8 +143,8 @@ No default schema selected; type \use <schema> to set one.
                 "status": "ONLINE",
                 "version": "8.0.43"
             },
-            "test-cluster:3306": {
-                "address": "test-cluster:3306",
+            "my-cluster:3306": {
+                "address": "my-cluster:3306",
                 "memberRole": "SECONDARY",
                 "mode": "R/O",
                 "readReplicas": {},
@@ -131,16 +156,26 @@ No default schema selected; type \use <schema> to set one.
         },
         "topologyMode": "Single-Primary"
     },
-    "groupInformationSourceMember": "test-cluster-2:3306"
+    "groupInformationSourceMember": "my-cluster-2:3306"
 }
-
 ```
 
-License
--------
+***
 
-GPL-3.0
+## License
 
-Other
-------------------
+This project is released under the GNU General Public License v3.0 (GPL‑3.0).
+You are free to use, modify, and distribute this software, provided that:
+
+ - The same license (GPL‑3.0) is preserved for any derivative works.
+ - Source modifications remain accessible and open under equivalent terms.
+ - All distributions include a copy of the GPL‑3.0 license text.
+ - Commercial use is permitted, but proprietary redistribution is not.
+
+***
+
+## Demonstration
+
 [![asciicast](https://asciinema.org/a/8f5KmFqAZeHS8rJBYylBrsZa5.svg)](https://asciinema.org/a/8f5KmFqAZeHS8rJBYylBrsZa5)
+
+---

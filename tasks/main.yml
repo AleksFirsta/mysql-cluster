@@ -1,6 +1,10 @@
 ---
 # tasks file for mysql-cluster
-- name: Configure list of servers in etc/hosts
+- name: Gather package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Configure list of servers in /etc/hosts
   ansible.builtin.import_tasks: config_etc_hosts.yml
 
 - name: Security configuration

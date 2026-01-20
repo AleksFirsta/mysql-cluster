@@ -1,16 +1,16 @@
-- name: Install MySQL server on Debian family
+- name: Install MySQL server on Debian
   ansible.builtin.apt:
     name: 
-      - "mysql-server={{ mysql_version }}-1ubuntu{{ ansible_distribution_version }}"
+      - "mysql-server={{ mysql_version }}*"
       - mysql-shell
     state: present
     update_cache: yes
   when: ansible_os_family == "Debian"
 
-- name: Install MySQL packages on RedHat family
+- name: Install MySQL packages on RedHat
   ansible.builtin.yum:
     name:
-      - "mysql-community-server-{{ mysql_version }}-1.el{{ ansible_distribution_major_version }}"
+      - "mysql-community-server-{{ mysql_version }}*"
       - mysql-shell
     state: present
   when: ansible_os_family == "RedHat"
@@ -23,7 +23,7 @@
   when: ansible_os_family == "Debian"
   become: true
 
-- name: Install pip3 on RHEL-based systems
+- name: Install pip3 on RedHat-based systems
   ansible.builtin.yum:
     name: python3-pip
     state: present
